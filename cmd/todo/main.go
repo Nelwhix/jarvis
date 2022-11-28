@@ -21,9 +21,10 @@ func main() {
 		fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
 		flag.PrintDefaults()
 	}
-	task := flag.String("task", "", "Add a new task")
+	task := flag.String("add", "", "Add a new task")
 	listItems := flag.Bool("list", false, "List all tasks")
 	complete := flag.Int("finish", 0, "Complete a task")
+	delete := flag.Int("del", 0, "Delete a task")
 
 	flag.Parse()
 
@@ -36,10 +37,11 @@ func main() {
 
 	switch {
 	case *listItems:
-		for _, item := range *list {
-			if !item.Done {
-				fmt.Println(item.Task)
-			}
+		fmt.Print(list)
+	case *delete > 0:
+		if err := list.Delete(*delete); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
 	case *complete > 0:
 		if err := list.Complete(*complete); err != nil {
